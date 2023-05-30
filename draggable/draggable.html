@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Sortable</title>
+  <link rel="stylesheet" href="jquery-ui.css">
+  <style>
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      margin-bottom: 10px;
+    }
+
+    li {
+      margin: 5px;
+      padding: 25px;
+      width: 60%;
+    }
+
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <script>
+    $(function () {
+      $("#sortable").sortable({
+        revert: true,
+        items: 'li',
+        toleranceElement: '> div'
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <button id="btnGetJson">Get json</button>
+  <button id="btnAddMain">Add main +</button>
+  <ul id="sortable">
+    <li class="ui-state-default">
+      <div class="divSubItems"><input type="text" class="title" value="item1"><input type="text" value="link"
+          class="link"><button id="addNewSub">+</button></div>
+      <ul>
+        <li class="ui-state-default">
+          <div class="divSubItems"><input type="text" class="title" value="subItem1"><input type="text" value="link"
+              class="link"><button id="addNewSub">+</button></div>
+        </li>
+        <li class="ui-state-default">
+          <div class="divSubItems"><input type="text" class="title" value="subItem2"><input type="text" value="link"
+              class="link"><button id="addNewSub">+</button></div>
+          <ul>
+            <li class="ui-state-default">
+              <div class="divSubItems"><input type="text" class="title" value="subItem2.1"><input type="text"
+                  value="link" class="link"><button id="addNewSub">+</button></div>
+            </li>
+            <li class="ui-state-default">
+              <div class="divSubItems"><input type="text" class="title" value="subItem2.2"><input type="text"
+                  value="link" class="link"><button id="addNewSub">+</button></div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li class="ui-state-default">
+      <div class="divSubItems"><input type="text" class="title" value="Item2"><input type="text" value="link"
+          class="link"><button id="addNewSub">+</button></div>
+    </li>
+    <li class="ui-state-default">
+      <div class="divSubItems"><input type="text" class="title" value="Item3"><input type="text" value="link"
+          class="link"><button id="addNewSub">+</button></div>
+    </li>
+  </ul>
+
+</body>
+
+</html>
+
+
+<script>
+  $('body').on('click', '#addNewSub', function () {
+    var li = $(this).parent('div').parent('li');
+    console.log($(li));
+    if ($(li).find('ul').length > 0) {
+      $(li).find('ul').first().append(`<li class="ui-state-default">
+    <div class="divSubItems"><input type="text" class="title" value="ITEM"><input type="text" value="link" class="link"><button id="addNewSub">+</button></div>
+  </li>`);
+
+    } else {
+      $(li).first().append(`<ul><li class="ui-state-default">
+    <div class="divSubItems"><input type="text" class="title" value="ITEM"><input type="text" value="link" class="link"><button id="addNewSub">+</button></div>
+  </li></ul>`)
+    }
+  });
+
+  $('body').on('click', '#btnAddMain', function () {
+    $('#sortable').append(`<li class="ui-state-default">
+    <div class="divSubItems"><input type="text" class="title" value="ITEM"><input type="text" value="link" class="link"><button id="addNewSub">+</button></div>
+  </li>`);
+  });
+
+  $('body').on('click', '#btnGetJson', function () {
+    var mainArr = [];
+    $('#sortable').children().each(function (i, li) {
+      var result = getChildValues($(li));
+      if (result !== {}) {
+        mainArr.push(result);
+      }
+    })
+    console.log(mainArr);
+  });
+
+
+  function getChildValues(li) {
+    var obj = { "title": $(li).first().find(".title").val(), "link": $(li).first().find(".link").val(), "subArr": [] };
+    if ($(li).find('ul').length > 0) {
+      $(li).find('ul').first().children().each(function (i, el) {
+        var subObj = getChildValues(el);
+        if (subObj !== {}) {
+            obj.subArr.push(subObj);
+        }
+      })
+    }
+    return obj;
+  }
+
+
+</script>
